@@ -27,3 +27,9 @@ class Course(Base):
     eur_buy: Mapped[float] = mapped_column()
     eur_sell: Mapped[float] = mapped_column()
     bank: Mapped["Bank"] = relationship(back_populates="rates")
+
+    def __str__(self):
+        return (
+            f"<{self.__class__.__name__}> usd -> (sell: {self.usd_sell},"
+            f" buy: {self.usd_buy}), eur -> (sell: {self.eur_sell}, buy: {self.eur_buy})"
+        )

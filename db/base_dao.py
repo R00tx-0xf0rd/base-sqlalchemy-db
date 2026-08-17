@@ -1,14 +1,9 @@
 import logging
-from typing import TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy import Result, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from db.models import Bank, Base
-
-T = TypeVar("T", bound=Base)
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +35,3 @@ class BaseDAO[T]:
         except SQLAlchemyError:
             logger.info("Error fetching all data")
             raise
-
-
-class BankDAO(BaseDAO[Bank]):
-    model = Bank
