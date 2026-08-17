@@ -1,11 +1,15 @@
 from __future__ import annotations
+
 from datetime import UTC, datetime
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, MetaData, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+from config import settings
 
 
 class Base(DeclarativeBase):
+    metadata = MetaData(naming_convention=settings.db.naming_convention)
     id: Mapped[int] = mapped_column(primary_key=True)
 
 
@@ -14,7 +18,7 @@ class Bank(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     bank_name: Mapped[str]
     bank_url: Mapped[str]
-    rates: Mapped[list["Course"]] = relationship(back_populates="bank")
+    rates: Mapped[list[Course]] = relationship(back_populates="bank")
 
 
 class Course(Base):
@@ -26,7 +30,9 @@ class Course(Base):
     usd_sell: Mapped[float] = mapped_column()
     eur_buy: Mapped[float] = mapped_column()
     eur_sell: Mapped[float] = mapped_column()
-    bank: Mapped["Bank"] = relationship(back_populates="rates")
+    bank: Mapped[Bank] = relationship(back_populates="rates")
+
+    __table_args__ = (UniqueConstraint("usd_buy", "usd_sell"),)
 
     def __str__(self):
         return (
