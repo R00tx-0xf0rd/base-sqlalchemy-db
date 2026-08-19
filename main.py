@@ -32,8 +32,11 @@ async def main():
             bank_name="Совкомбанк"
         )
         bank_model = await BankDAO(session=session).get_model_by_id(model_id=22)
-        for rate in bank_model.rates:
-            print(rate)
+        if not bank_model:
+            logger.warning("No rates found for this bank.")
+        else:
+            for rate in bank_model.rates:
+                print(rate)
         bank_models = await BankDAO(session=session).get_all(filters=bank_filter)
         # bank_models = await BankDAO(session=session).get_all()
         for bank in bank_models:

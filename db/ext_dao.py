@@ -1,22 +1,21 @@
 import logging
-from typing import TypeVar
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import selectinload
 
 from db.base_dao import BaseDAO
-from db.models import Bank, Base
-
-T = TypeVar("T", bound=Base)
+from db.models import Bank
 
 logger = logging.getLogger(__name__)
 
 
 class BankDAO(BaseDAO[Bank]):
-    model = Bank
+    model: type[Bank] = Bank
 
-    async def get_model_by_id(self, model_id: int) -> T | None:
+    async def get_model_by_id(self, model_id: int) -> Bank | None:
+        if self.model is None:
+            raise ValueError("Model is not defined")
         try:
             query = (
                 select(self.model)
